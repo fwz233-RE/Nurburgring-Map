@@ -1,43 +1,11 @@
-<?PHP
-header("Cache-Control: no-cache");
-require_once ("env.php");
-$lastEditTime = date ("jhi", filemtime(__FILE__));
-
-$acceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-$languages = explode(',', $acceptLanguage);
-$zhLanguages = [];
-$lang = "en";
-foreach($languages as $lang){
-  if(strpos(trim($lang), 'zh-') === 0){
-    $zhLanguages[] = $lang;
-  }
-}
-if(!empty($zhLanguages)) $lang = "cn";
-if(isset($_GET['lang']) && $_GET['lang'] == "cn") $lang = "cn";
-if(isset($_GET['lang']) && $_GET['lang'] == "en") $lang = "en";
-
-if($lang == "cn"){
-  $extraHead = "";
-  // $pageDesc="可交互的纽博格林北环赛道地图，展示了众多弯道的介绍和图片";
-  // $pageLang="zh-Hans";
-  $jsLang = "cn";
-}
-else{
-  $extraHead = "";
-  // $pageDesc="An interactive map of Nürburgring race track";
-  // $pageLang="en-US";
-  $jsLang = "en";
-}
-
-echo
-<<<HTML
+<!DOCTYPE html>
 <html lang="zh-Hans">
 	<head>
     <meta charset="UTF-8">
-    <title>An Interactive Map of Nürburgring  纽北赛道地图</title>
+    <title>纽北赛道地图 Nürburgring Map</title>
     <meta name="robots" content="noodp"/>
     <meta name="author" content="JJ Ying" />
-    <meta name="description" content="Learn the name of every corner in the famous race track: Nürburgring 可交互的纽博格林北环赛道地图，展示了众多弯道的介绍和图片"/>
+    <meta name="description" content="可交互的纽博格林北环赛道地图，展示了众多弯道的介绍和图片 An interactive map of Nürburgring race track"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <meta name="format-detection" content="telephone=no">
 
@@ -55,15 +23,27 @@ echo
 
     <link rel="preconnect" href="https://s.anyway.red">
     <link rel="preconnect" href="https://anyway.fm">
-    <link rel="stylesheet" href="{$assetsDir}/main.css?v={$lastEditTime}"/>
-    {$extraHead}
-    <link rel="stylesheet" href="{$assetsDir}/sm/result.css"/>
-    <link rel="icon" href="{$assetsDir}/fav.png">
+    <link rel="stylesheet" href="assets/main.css"/>
+    <link rel="stylesheet" href="assets/sm/result.css"/>
+    <link rel="icon" href="assets/fav.png">
 
     <style>[v-cloak],.hidden-area{display: none;}</style>
 
     <script>
-      var lang = '{$jsLang}'
+      // 浏览器语言检测，替代PHP服务器端检测
+      function detectLanguage() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get('lang');
+        
+        if (langParam === 'cn') return 'cn';
+        if (langParam === 'en') return 'en';
+        
+        const userLang = navigator.language || navigator.userLanguage;
+        return userLang.startsWith('zh') ? 'cn' : 'en';
+      }
+      
+      var lang = detectLanguage();
+      
       var _paq = window._paq = window._paq || [];
       _paq.push(['trackPageView']);
       _paq.push(['enableLinkTracking']);
@@ -137,10 +117,10 @@ echo
           <div class="inner" v-if="p == 0" v-cloak>
             <p class="title-font msg-title" v-if="lang == 'cn'">纽北赛道地图</p>
             <p class="title-font msg-title" v-if="lang == 'en'">Nürburgring Map</p>
-            <p v-if="lang == 'cn'"><a href="https://zh.wikipedia.org/zh-hans/%E7%BA%BD%E5%8D%9A%E6%A0%BC%E6%9E%97%E8%B5%9B%E9%81%93" target="_blank">纽博格林赛道</a>（德语：Nürburgring）修筑于 1920 年代，由于跑道非常长、地形复杂充满挑战性，被认为是世界上最严苛的竞速赛道，其中的北环俗称为“纽北”，又叫“绿色地狱”。这里很多弯道都有独特的名字和故事，通过本地图可以方便爱好者学习。</p>
-            <p v-if="lang == 'en'"><a href="https://en.wikipedia.org/wiki/N%C3%BCrburgring" target="_blank">Nürburgring</a> is a German race track built in 1920s, and the North Loop(Nordschleife) of it is very famous and challenging for racers around the world, through this interactive map you can learn the names of the corners in Nürburgring</p>
+            <p v-if="lang == 'cn'"><a href="https://zh.wikipedia.org/zh-hans/%E7%BA%BD%E5%8D%9A%E6%A0%BC%E6%9E%97%E8%B5%9B%E9%81%93" target="_blank">纽博格林赛道</a>（德语：Nürburgring）修筑于 1920 年代，由于跑道非常长、地形复杂充满挑战性，被认为是世界上最严苛的竞速赛道，其中的北环俗称为"纽北"，又叫"绿色地狱"。</p>
+            <p v-if="lang == 'en'"><a href="https://en.wikipedia.org/wiki/N%C3%BCrburgring" target="_blank">Nürburgring</a> is a German race track built in 1920s, and the North Loop(Nordschleife) of it is very famous and challenging for racers around the world</p>
             <div class="indicator">
-              <div v-if="lang == 'cn'">向下滚动或点击弯道名查看地图</div>
+              <div v-if="lang == 'cn'">向下滚动或点击弯道名</div>
               <div v-if="lang == 'en'">Scroll or click the corner to start</div>
               <svg viewBox="0 0 100 100" class="scroll-arrow">
                 <path d="M10 20l40 30l40 -30"/>
@@ -161,7 +141,7 @@ echo
       <div class="inner skew-n">
         <span class="title-font" v-if="lang == 'cn'">纽<span>博格林</span>北<span>环</span>赛道地图</span>
         <span class="title-font" v-if="lang == 'en'">Nürburgring Map</span>
-        <img src="{$assetsDir}/logo.svg" alt="纽北赛道地图"/>
+        <img src="assets/logo.svg" alt="纽北赛道地图"/>
       </div>
     </div>
     <div class="corner-info">
@@ -270,9 +250,7 @@ echo
 
   <div class="all-names title-font"><template v-for="c in corners" >{{c.ch}} <template v-if="c.nk && c.ch != c.nk">{{c.nk}} </template></template> </div>
 </div>
-<script src='{$assetsDir}/vue-2.6.11.min.js'></script>
-<script src="{$assetsDir}/main.js?v={$lastEditTime}"></script>
+<script src='assets/vue-2.6.11.min.js'></script>
+<script src="assets/main.js"></script>
 </body>
 </html>
-HTML;
-?>

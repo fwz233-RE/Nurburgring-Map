@@ -390,12 +390,12 @@ body{
   color: var(--text1);
   font-size: 1rem;
   width: min(23em, 80vw);
-  background: var(--bgt);
+  background: transparent;
   /* -webkit-backdrop-filter: blur(.5rem); */
   /* backdrop-filter: blur(.5rem); */
   padding: 1em;
   border-radius: 1em;
-  border: 2px solid var(--bg1);
+  /* border: 2px solid var(--bg1); */
   translate: -4vw 0;
   animation: msgShow .25s var(--curve) .3s both;
 
